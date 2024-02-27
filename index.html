@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bin2Dec</title>
+
+    <style>
+        .invalid-field {
+            border-color: red;
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+
+        #error-message, #result {
+            display: none;
+        }
+
+        .active {
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Conversor de Binário para Decimal</h1>
+
+    <h3>Digite um valor binário de até 8 dígitos</h3>
+
+    <input
+        type="text"
+        id="bin-number"
+        maxlength="8"
+    />
+    <span id="error-message">Digito inválido informado!</span>
+
+    <button id="btn-convert" disabled>Converter</button>
+
+    <span id="result"></span>
+
+    <script>
+        const binInput = document.getElementById("bin-number");
+        const errorSpan = document.getElementById("error-message");
+        const convertButton = document.getElementById("btn-convert");
+        const resultText = document.getElementById("result");
+
+        binInput.addEventListener("focus", function(){
+            resultText.innerHTML = "";
+        })
+
+        binInput.addEventListener("input", function(event){
+            const value = event.target.value;
+
+            if(value.match(/[^01]/) && value != "") {
+                binInput.classList.add("invalid-field");
+                errorSpan.classList.add("active");
+                convertButton.disabled = true;
+            } else {
+                binInput.classList.remove("invalid-field");
+                errorSpan.classList.remove("active");
+                convertButton.disabled = value == "";
+            }
+        })
+
+        convertButton.addEventListener("click", () => {
+            const bin = binInput.value;
+            const dec = bin2Dec(bin);
+
+            console.log(bin, " => ", dec);
+
+            const res = bin + "<sub>(2)</sub>" + " = " + dec + "<sub>(10)</sub>";
+
+            resultText.classList.add("active");
+            resultText.innerHTML = res;
+            binInput.value = "";
+            convertButton.disabled = true;
+        })
+
+        function bin2Dec(bin) {
+            const length = bin.length;
+
+            let value = 0;
+            for(let i = 0; i < length; i++) {
+                value += bin[length - i - 1] * (2 ** i);
+            }
+
+            return value;
+        }
+    </script>
+</body>
+</html>
